@@ -4,4 +4,4 @@
 [![License](https://poser.pugx.org/ecotone/jms-converter/license)](https://packagist.org/packages/ecotone/jms-converter)
 [![Latest Stable Version](https://poser.pugx.org/ecotone/jms-converter/v/stable)](https://packagist.org/packages/ecotone/jms-converter)
 
-Provides integration for JMS Converter for Ecotone.
+Provides integration for JMS Converter in Ecotone.
