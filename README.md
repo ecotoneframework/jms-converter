@@ -1,11 +1,7 @@
 # Ecotone
 
-[![Build Status](https://travis-ci.org/ecotoneframework/symfony.svg?branch=master)](https://travis-ci.org/ecotoneframework/amqp)
-[![License](https://poser.pugx.org/ecotone/amqp/license)](https://packagist.org/packages/ecotone/amqp)
-[![Latest Stable Version](https://poser.pugx.org/ecotone/amqp/v/stable)](https://packagist.org/packages/ecotone/amqp)
+[![Build Status](https://travis-ci.org/ecotoneframework/jms-converter.svg?branch=master)](https://travis-ci.org/ecotoneframework/jms-converter)
+[![License](https://poser.pugx.org/ecotone/jms-converter/license)](https://packagist.org/packages/ecotone/jms-converter)
+[![Latest Stable Version](https://poser.pugx.org/ecotone/jms-converter/v/stable)](https://packagist.org/packages/ecotone/jms-converter)
 
-Provides integration for AMQP with Ecotone.
-
-
-->event driven -> outbound channel adapter
-input <-
+Provides integration for JMS Converter for Ecotone.
