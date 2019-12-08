@@ -14,7 +14,6 @@ install:
 
 script:
   - vendor/bin/phpunit --coverage-html ./tests/coverage/html --coverage-clover ./tests/coverage/clover.xml
-  - vendor/bin/behat
 
 after_success:
   - travis_retry php bin/coveralls -v
