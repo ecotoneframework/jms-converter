@@ -190,6 +190,16 @@ class JMSConverterTest extends TestCase
         $this->assertEquals($toSerialize, $this->getJMSConverter([])->convert($serialized, TypeDescriptor::createStringType(), MediaType::createApplicationJson(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHPObject()));
     }
 
+    public function test_converting_from_array_to_object()
+    {
+        $toSerialize = new TwoLevelNestedObjectProperty(new PropertyWithTypeAndMetadataType(3));
+        $expectedSerializationObject = ["data" => ["data" => 3]];
+
+        $serialized = $this->getJMSConverter([])->convert($toSerialize, TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHPObject(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHPObject());
+        $this->assertEquals($expectedSerializationObject, $serialized);
+        $this->assertEquals($toSerialize, $this->getJMSConverter([])->convert($serialized, TypeDescriptor::createArrayType(), MediaType::createApplicationXPHPObject(), TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHPObject()));
+    }
+
     public function test_converting_to_xml()
     {
         $toSerialize = new Person(new Status("active"));
@@ -237,6 +247,16 @@ class JMSConverterTest extends TestCase
     }
 
     public function test_matching_conversion_from_object_to_json()
+    {
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::create(Person::class), MediaType::createApplicationXPHPObject(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHPObject())
+        );
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHPObject(), TypeDescriptor::create(Person::class), MediaType::createApplicationXPHPObject())
+        );
+    }
+
+    public function test_matching_conversion_from_array_to_object()
     {
         $this->assertTrue(
             $this->getJMSConverter([])->matches(TypeDescriptor::create(Person::class), MediaType::createApplicationXPHPObject(), TypeDescriptor::createStringType(), MediaType::createApplicationJson())
