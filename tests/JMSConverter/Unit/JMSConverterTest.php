@@ -12,6 +12,7 @@ use Ecotone\Messaging\Conversion\MediaType;
 use Ecotone\Messaging\Handler\InMemoryReferenceSearchService;
 use Ecotone\Messaging\Handler\TypeDescriptor;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\ArrayConversion\ClassToArrayConverter;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Person;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Status;
@@ -96,6 +97,19 @@ class JMSConverterTest extends TestCase
         $expectedSerializationString = '{"collection":[{"collection":[{"data":1},{"data":2}]},{"collection":[{"data":3},{"data":4}]}]}';
 
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
+    }
+
+    public function test_serializing_with_metadata_cache()
+    {
+        $toSerialize = new PropertyWithTypeAndMetadataType(5);
+        $converter = (new JMSConverterBuilder([], JMSConverterConfiguration::createWithDefaults(), "/tmp/" . Uuid::uuid4()->toString()))->build(InMemoryReferenceSearchService::createWith([]));
+
+        $serialized = $converter->convert($toSerialize, TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHPObject(), TypeDescriptor::createStringType(), MediaType::createApplicationJson());
+
+        $this->assertEquals(
+            $toSerialize,
+            $converter->convert($serialized, TypeDescriptor::createStringType(), MediaType::createApplicationJson(), TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHPObject(), TypeDescriptor::createFromVariable($toSerialize))
+        );
     }
 
     public function test_converting_with_jms_handlers_using_simple_type_to_class_mapping()
