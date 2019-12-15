@@ -31,8 +31,8 @@ class JMSHandlerAdapter
 
     public function __construct(TypeDescriptor $fromType, TypeDescriptor $toType, string $referenceName, string $methodName)
     {
-        Assert::isTrue($fromType->isClass() || $toType->isClass(), "Atleast one side of converter must be class");
-        Assert::isFalse($fromType->isClass() && $toType->isClass(), "Both sides of converter cannot to be classes");
+        Assert::isTrue($fromType->isClassOrInterface() || $toType->isClassOrInterface(), "Atleast one side of converter must be class");
+        Assert::isFalse($fromType->isClassOrInterface() && $toType->isClassOrInterface(), "Both sides of converter cannot to be classes");
 
         $this->fromType = $fromType;
         $this->toType = $toType;
@@ -57,11 +57,11 @@ class JMSHandlerAdapter
 
     public function getRelatedClass(): string
     {
-        return $this->fromType->isClass() ? $this->fromType->toString() : $this->toType->toString();
+        return $this->fromType->isClassOrInterface() ? $this->fromType->toString() : $this->toType->toString();
     }
 
     public function getDirection(): int
     {
-        return $this->fromType->isClass() ? GraphNavigator::DIRECTION_SERIALIZATION : GraphNavigator::DIRECTION_DESERIALIZATION;
+        return $this->fromType->isClassOrInterface() ? GraphNavigator::DIRECTION_SERIALIZATION : GraphNavigator::DIRECTION_DESERIALIZATION;
     }
 }

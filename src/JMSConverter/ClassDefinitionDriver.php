@@ -41,7 +41,7 @@ class ClassDefinitionDriver implements DriverInterface
 
     private function toSerializerType(ClassPropertyDefinition $propertyDefinition, ?array $jmsType) : ?array
     {
-        if ($propertyDefinition->hasAnnotation(TypeDescriptor::create(Type::class)) || $propertyDefinition->getType()->isUnknown()) {
+        if ($propertyDefinition->hasAnnotation(TypeDescriptor::create(Type::class)) || $propertyDefinition->getType()->isAnything()) {
             return $jmsType;
         }
 

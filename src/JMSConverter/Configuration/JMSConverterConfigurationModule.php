@@ -54,10 +54,10 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
             $fromType = $interfaceToCall->getFirstParameter()->getTypeDescriptor();
             $toType = $interfaceToCall->getReturnType();
 
-            if (!$fromType->isClass() && !$toType->isClass()) {
+            if (!$fromType->isClassOrInterface() && !$toType->isClassOrInterface()) {
                 continue;
             }
-            if ($fromType->isClass() && $toType->isClass()) {
+            if ($fromType->isClassOrInterface() && $toType->isClassOrInterface()) {
                 continue;
             }
 
