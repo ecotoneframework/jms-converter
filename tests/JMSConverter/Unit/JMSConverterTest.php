@@ -11,6 +11,7 @@ use Ecotone\Messaging\Conversion\Converter;
 use Ecotone\Messaging\Conversion\MediaType;
 use Ecotone\Messaging\Handler\InMemoryReferenceSearchService;
 use Ecotone\Messaging\Handler\TypeDescriptor;
+use Ecotone\Messaging\Support\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\ArrayConversion\ClassToArrayConverter;
@@ -21,7 +22,9 @@ use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\CollectionProperty;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PersonInterface;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertiesWithDocblockTypes;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertyWithAnnotationMetadataDefined;
+use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertyWithNullUnionType;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertyWithTypeAndMetadataType;
+use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertyWithUnionType;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\ThreeLevelNestedObjectProperty;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\TwoLevelNestedCollectionProperty;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\TwoLevelNestedObjectProperty;
@@ -95,6 +98,24 @@ class JMSConverterTest extends TestCase
             new CollectionProperty([new PropertyWithTypeAndMetadataType(3), new PropertyWithTypeAndMetadataType(4)])
         ]);
         $expectedSerializationString = '{"collection":[{"collection":[{"data":1},{"data":2}]},{"collection":[{"data":3},{"data":4}]}]}';
+
+        $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
+    }
+
+    public function test_skipping_nullable_type()
+    {
+        $toSerialize = new PropertyWithNullUnionType('100');
+        $expectedSerializationString = '{"data":"100"}';
+
+        $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
+    }
+
+    public function test_throwing_exception_if_converted_type_is_union_type()
+    {
+        $toSerialize = new PropertyWithUnionType([]);
+        $expectedSerializationString = '{"data":[]}';
+
+        $this->expectException(InvalidArgumentException::class);
 
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
     }

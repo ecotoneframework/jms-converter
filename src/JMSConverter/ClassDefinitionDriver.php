@@ -7,6 +7,8 @@ namespace Ecotone\JMSConverter;
 use Ecotone\Messaging\Handler\ClassDefinition;
 use Ecotone\Messaging\Handler\ClassPropertyDefinition;
 use Ecotone\Messaging\Handler\TypeDescriptor;
+use Ecotone\Messaging\Handler\UnionTypeDescriptor;
+use Ecotone\Messaging\Support\InvalidArgumentException;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Metadata\Driver\AnnotationDriver;
 use JMS\Serializer\Metadata\PropertyMetadata;
@@ -33,20 +35,35 @@ class ClassDefinitionDriver implements DriverInterface
 
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($classMetadata->propertyMetadata as $propertyMetadata) {
-            $propertyMetadata->type = $this->toSerializerType($classDefinition->getProperty($propertyMetadata->name), $propertyMetadata->type);
+            $propertyMetadata->type = $this->toSerializerType($class->getName(), $classDefinition->getProperty($propertyMetadata->name), $propertyMetadata->type);
         }
 
         return $classMetadata;
     }
 
-    private function toSerializerType(ClassPropertyDefinition $propertyDefinition, ?array $jmsType) : ?array
+    private function toSerializerType(string $className, ClassPropertyDefinition $propertyDefinition, ?array $jmsType) : ?array
     {
         if ($propertyDefinition->hasAnnotation(TypeDescriptor::create(Type::class)) || $propertyDefinition->getType()->isAnything()) {
             return $jmsType;
         }
 
+        /** @var UnionTypeDescriptor|TypeDescriptor $type */
         $type = $propertyDefinition->getType();
         $params = [];
+
+        if ($type->isUnionType()) {
+            $types = [];
+            foreach ($type->getUnionTypes() as $unionType) {
+                if (!$unionType->equals(TypeDescriptor::create(TypeDescriptor::NULL))) {
+                    $types[] = $unionType;
+                }
+            }
+            $type = UnionTypeDescriptor::createWith($types);
+        }
+
+        if ($type->isUnionType()) {
+            throw InvalidArgumentException::create("JMS Converter is not cable of handling union types. Class {$className}::{$propertyDefinition->getName()} is using union type {$propertyDefinition->getType()}");
+        }
 
         if ($type->isCollection()) {
             foreach ($type->resolveGenericTypes() as $genericType) {
