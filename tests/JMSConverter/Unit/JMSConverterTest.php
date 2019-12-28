@@ -19,6 +19,7 @@ use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Person;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Status;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\StatusConverter;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\CollectionProperty;
+use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PersonAbstractClass;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PersonInterface;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertiesWithDocblockTypes;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertyWithAnnotationMetadataDefined;
@@ -294,6 +295,16 @@ class JMSConverterTest extends TestCase
         );
         $this->assertFalse(
             $this->getJMSConverter([])->matches(TypeDescriptor::createStringType(), MediaType::createApplicationJson(), TypeDescriptor::create(PersonInterface::class), MediaType::createApplicationXPHPObject())
+        );
+    }
+
+    public function test_not_matching_conversion_from_abstract_class()
+    {
+        $this->assertFalse(
+            $this->getJMSConverter([])->matches(TypeDescriptor::create(PersonAbstractClass::class), MediaType::createApplicationXPHPObject(), TypeDescriptor::createStringType(), MediaType::createApplicationJson())
+        );
+        $this->assertFalse(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createStringType(), MediaType::createApplicationJson(), TypeDescriptor::create(PersonAbstractClass::class), MediaType::createApplicationXPHPObject())
         );
     }
 

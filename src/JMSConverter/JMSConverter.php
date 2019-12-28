@@ -68,6 +68,10 @@ class JMSConverter implements Converter
             return false;
         }
 
+        if ($sourceType->isAbstractClass() || $targetType->isAbstractClass()) {
+            return false;
+        }
+
         return true;
     }
 }
