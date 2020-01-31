@@ -4,19 +4,19 @@
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\ArrayConversion;
 
 use Ecotone\Messaging\Annotation\Converter;
-use Ecotone\Messaging\Annotation\MessageEndpoint;
+use stdClass;
 
 /**
- * @MessageEndpoint()
+ * @Converter()
  */
 class ClassToArrayConverter
 {
     /**
      * @Converter()
      */
-    public function convertFrom(array $data) : \stdClass
+    public function convertFrom(array $data): stdClass
     {
-        $stdClass = new \stdClass();
+        $stdClass = new stdClass();
         $stdClass->data = $data['data'];
 
         return $stdClass;
@@ -25,7 +25,7 @@ class ClassToArrayConverter
     /**
      * @Converter()
      */
-    public function convertTo(\stdClass $class) : array
+    public function convertTo(stdClass $class): array
     {
         return [
             "data" => $class->data

@@ -8,7 +8,6 @@ use Ecotone\JMSConverter\JMSConverterBuilder;
 use Ecotone\JMSConverter\JMSConverterConfiguration;
 use Ecotone\JMSConverter\JMSHandlerAdapter;
 use Ecotone\Messaging\Annotation\Converter;
-use Ecotone\Messaging\Annotation\MessageEndpoint;
 use Ecotone\Messaging\Annotation\ModuleAnnotation;
 use Ecotone\Messaging\Config\Annotation\AnnotationModule;
 use Ecotone\Messaging\Config\Annotation\AnnotationRegistrationService;
@@ -44,7 +43,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
     public static function create(AnnotationRegistrationService $annotationRegistrationService)
     {
         $registrations = $annotationRegistrationService->findRegistrationsFor(
-            MessageEndpoint::class,
+            Converter::class,
             Converter::class
         );
 
