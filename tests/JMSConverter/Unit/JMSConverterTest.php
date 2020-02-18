@@ -177,7 +177,30 @@ class JMSConverterTest extends TestCase
         ]);
     }
 
-    public function test_converting_array_of_objects()
+    public function test_converting_array_of_objects_to_array()
+    {
+        $toSerialize = [new Status("active"), new Status("archived")];
+        $expectedSerialized = ["active", "archived"];
+
+        $jmsHandlerAdapters = [
+            JMSHandlerAdapter::create(
+                TypeDescriptor::create(Status::class),
+                TypeDescriptor::createStringType(),
+                StatusConverter::class,
+                "convertFrom"
+            ),
+            JMSHandlerAdapter::create(
+                TypeDescriptor::createStringType(),
+                TypeDescriptor::create(Status::class),
+                StatusConverter::class,
+                "convertTo"
+            )
+        ];
+
+        $this->assertEquals($expectedSerialized, $this->serializeToArray($toSerialize, $jmsHandlerAdapters));
+    }
+
+    public function test_converting_array_of_objects_to_json()
     {
         $toSerialize = [new Status("active"), new Status("archived")];
         $expectedSerializationString = '["active","archived"]';
@@ -197,7 +220,7 @@ class JMSConverterTest extends TestCase
             )
         ];
 
-        $serialized = $this->serialize($toSerialize, $jmsHandlerAdapters);
+        $serialized = $this->serializeToJson($toSerialize, $jmsHandlerAdapters);
         $this->assertEquals($expectedSerializationString, $serialized);
         $this->assertEquals($toSerialize, $this->deserialize($serialized, "array<Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Status>", $jmsHandlerAdapters));
     }
@@ -320,14 +343,19 @@ class JMSConverterTest extends TestCase
 
     private function assertSerializationAndDeserializationWithJSON(object $toSerialize, string $expectedSerializationString, $jmsHandlerAdapters = []): void
     {
-        $serialized = $this->serialize($toSerialize, $jmsHandlerAdapters);
+        $serialized = $this->serializeToJson($toSerialize, $jmsHandlerAdapters);
         $this->assertEquals($expectedSerializationString, $serialized);
         $this->assertEquals($toSerialize, $this->deserialize($serialized, get_class($toSerialize), $jmsHandlerAdapters));
     }
 
-    private function serialize($data, $jmsHandlerAdapters)
+    private function serializeToJson($data, $jmsHandlerAdapters)
     {
         return $this->getJMSConverter($jmsHandlerAdapters)->convert($data, TypeDescriptor::createFromVariable($data), MediaType::createApplicationXPHP(), TypeDescriptor::createStringType(), MediaType::createApplicationJson());
+    }
+
+    private function serializeToArray($data, $jmsHandlerAdapters)
+    {
+        return $this->getJMSConverter($jmsHandlerAdapters)->convert($data, TypeDescriptor::createFromVariable($data), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP());
     }
 
     private function deserialize(string $data, string $type, $jmsHandlerAdapters)
