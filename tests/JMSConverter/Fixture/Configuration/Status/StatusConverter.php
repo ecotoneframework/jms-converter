@@ -4,12 +4,13 @@
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\Status;
 
 use Ecotone\Messaging\Annotation\Converter;
+use Ecotone\Messaging\Annotation\ConverterClass;
 
 /**
  * Class StatusConverter
  * @package Test\Ecotone\JMSConverter\Fixture\Configuration\Status
  * @author Dariusz Gafka <dgafka.mail@gmail.com>
- * @Converter()
+ * @ConverterClass()
  */
 class StatusConverter
 {
