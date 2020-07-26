@@ -4,14 +4,15 @@
 namespace Ecotone\JMSConverter\Configuration;
 
 
+use Ecotone\AnnotationFinder\AnnotationFinder;
 use Ecotone\JMSConverter\JMSConverterBuilder;
 use Ecotone\JMSConverter\JMSConverterConfiguration;
 use Ecotone\JMSConverter\JMSHandlerAdapter;
 use Ecotone\Messaging\Annotation\Converter;
 use Ecotone\Messaging\Annotation\ConverterClass;
 use Ecotone\Messaging\Annotation\ModuleAnnotation;
+use Ecotone\Messaging\Config\Annotation\AnnotatedDefinitionReference;
 use Ecotone\Messaging\Config\Annotation\AnnotationModule;
-use Ecotone\Messaging\Config\Annotation\AnnotationRegistrationService;
 use Ecotone\Messaging\Config\Annotation\ModuleConfiguration\NoExternalConfigurationModule;
 use Ecotone\Messaging\Config\ApplicationConfiguration;
 use Ecotone\Messaging\Config\Configuration;
@@ -41,15 +42,13 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
     }
 
 
-    public static function create(AnnotationRegistrationService $annotationRegistrationService)
+    public static function create(AnnotationFinder $annotationRegistrationService)
     {
-        $registrations = $annotationRegistrationService->findRegistrationsFor(
-            ConverterClass::class,
-            Converter::class
-        );
+        $registrations = $annotationRegistrationService->findAnnotatedMethods(Converter::class);
 
         $converters = [];
         foreach ($registrations as $registration) {
+            $reference = AnnotatedDefinitionReference::getReferenceFor($registration);
             $interfaceToCall = InterfaceToCall::create($registration->getClassName(), $registration->getMethodName());
             $fromType = $interfaceToCall->getFirstParameter()->getTypeDescriptor();
             $toType = $interfaceToCall->getReturnType();
@@ -64,7 +63,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
             $converters[] = JMSHandlerAdapter::create(
                 $fromType,
                 $toType,
-                $registration->getReferenceName(),
+                $reference,
                 $registration->getMethodName(),
             );
         }

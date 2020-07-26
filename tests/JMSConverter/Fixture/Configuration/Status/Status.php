@@ -6,10 +6,7 @@ namespace Test\Ecotone\JMSConverter\Fixture\Configuration\Status;
 
 class Status
 {
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
     /**
      * Status constructor.

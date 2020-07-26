@@ -6,10 +6,7 @@ namespace Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert;
 
 class TwoLevelNestedObjectProperty
 {
-    /**
-     * @var PropertyWithTypeAndMetadataType
-     */
-    private $data;
+    private PropertyWithTypeAndMetadataType $data;
 
     /**
      * TwoLevelNestedObjectProperty constructor.

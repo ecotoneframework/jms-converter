@@ -6,10 +6,7 @@ namespace Test\Ecotone\JMSConverter\Fixture\Configuration\Status;
 
 class Person
 {
-    /**
-     * @var Status
-     */
-    private $status;
+    private Status $status;
 
     /**
      * Person constructor.

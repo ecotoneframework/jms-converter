@@ -6,10 +6,7 @@ namespace Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert;
 
 class ThreeLevelNestedObjectProperty
 {
-    /**
-     * @var TwoLevelNestedObjectProperty
-     */
-    private $data;
+    private TwoLevelNestedObjectProperty $data;
 
     /**
      * TwoLevelNestedObjectProperty constructor.

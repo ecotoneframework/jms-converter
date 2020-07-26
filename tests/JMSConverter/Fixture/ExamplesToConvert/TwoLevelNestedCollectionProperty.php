@@ -9,7 +9,7 @@ class TwoLevelNestedCollectionProperty
     /**
      * @var CollectionProperty[]
      */
-    private $collection;
+    private array $collection;
 
     /**
      * TwoLevelNestedObjectProperty constructor.

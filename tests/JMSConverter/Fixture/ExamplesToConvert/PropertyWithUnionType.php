@@ -9,7 +9,7 @@ class PropertyWithUnionType
     /**
      * @var array|string[]
      */
-    private $data;
+    private array $data;
 
     /**
      * PropertyWithUnionType constructor.

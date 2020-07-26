@@ -9,7 +9,7 @@ class CollectionProperty
     /**
      * @var PropertyWithTypeAndMetadataType[]
      */
-    private $collection;
+    private array $collection;
 
     /**
      * CollectionProperty constructor.

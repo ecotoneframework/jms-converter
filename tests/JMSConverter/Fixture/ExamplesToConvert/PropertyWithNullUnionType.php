@@ -6,10 +6,7 @@ namespace Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert;
 
 class PropertyWithNullUnionType
 {
-    /**
-     * @var null|string
-     */
-    private $data;
+    private ?string $data;
 
     /**
      * PropertyWithNullUnionType constructor.

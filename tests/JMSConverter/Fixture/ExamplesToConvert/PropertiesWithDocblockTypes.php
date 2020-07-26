@@ -6,14 +6,8 @@ namespace Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert;
 
 class PropertiesWithDocblockTypes
 {
-    /**
-     * @var string
-     */
-    private $name;
-    /**
-     * @var string
-     */
-    private $surname;
+    private string $name;
+    private string $surname;
 
     /**
      * ObjectWithDocblockTypes constructor.

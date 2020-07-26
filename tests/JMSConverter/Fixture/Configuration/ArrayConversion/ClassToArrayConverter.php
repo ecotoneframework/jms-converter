@@ -7,9 +7,6 @@ use Ecotone\Messaging\Annotation\Converter;
 use Ecotone\Messaging\Annotation\ConverterClass;
 use stdClass;
 
-/**
- * @ConverterClass()
- */
 class ClassToArrayConverter
 {
     /**
