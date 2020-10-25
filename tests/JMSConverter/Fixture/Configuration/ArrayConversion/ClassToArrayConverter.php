@@ -9,9 +9,7 @@ use stdClass;
 
 class ClassToArrayConverter
 {
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convertFrom(array $data): stdClass
     {
         $stdClass = new stdClass();
@@ -20,9 +18,7 @@ class ClassToArrayConverter
         return $stdClass;
     }
 
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convertTo(stdClass $class): array
     {
         return [

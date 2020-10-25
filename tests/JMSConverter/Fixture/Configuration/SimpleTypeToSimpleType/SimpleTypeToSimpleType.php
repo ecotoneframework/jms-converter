@@ -8,9 +8,7 @@ use Ecotone\Messaging\Annotation\ConverterClass;
 
 class SimpleTypeToSimpleType
 {
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convert(string $type): string
     {
 

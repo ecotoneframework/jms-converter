@@ -8,17 +8,13 @@ use Ecotone\Messaging\Annotation\ConverterClass;
 
 class StatusConverter
 {
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convertFrom(Status $status): string
     {
         return $status->getType();
     }
 
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convertTo(string $status): Status
     {
         return new Status($status);

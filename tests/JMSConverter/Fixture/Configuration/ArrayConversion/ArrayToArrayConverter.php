@@ -9,9 +9,7 @@ use Ecotone\Messaging\Annotation\MessageEndpoint;
 
 class ArrayToArrayConverter
 {
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convert(array $data) : array
     {
 

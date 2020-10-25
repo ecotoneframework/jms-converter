@@ -8,9 +8,7 @@ use Ecotone\Messaging\Annotation\MessageEndpoint;
 
 class ClassToClassConverter
 {
-    /**
-     * @Converter()
-     */
+    #[Converter]
     public function convert(\stdClass $stdClass) : \stdClass
     {
 
