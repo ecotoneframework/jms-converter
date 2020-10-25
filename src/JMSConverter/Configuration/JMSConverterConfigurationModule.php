@@ -19,12 +19,7 @@ use Ecotone\Messaging\Config\Configuration;
 use Ecotone\Messaging\Config\ModuleReferenceSearchService;
 use Ecotone\Messaging\Handler\InterfaceToCall;
 
-/**
- * Class JMSConverterConfiguration
- * @package Ecotone\JMSConverter
- * @author Dariusz Gafka <dgafka.mail@gmail.com>
- * @ModuleAnnotation()
- */
+#[ModuleAnnotation]
 class JMSConverterConfigurationModule extends NoExternalConfigurationModule implements AnnotationModule
 {
     /**
@@ -42,7 +37,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
     }
 
 
-    public static function create(AnnotationFinder $annotationRegistrationService)
+    public static function create(AnnotationFinder $annotationRegistrationService): static
     {
         $registrations = $annotationRegistrationService->findAnnotatedMethods(Converter::class);
 
