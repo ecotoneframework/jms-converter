@@ -116,7 +116,7 @@ class JMSConverterTest extends TestCase
         $toSerialize = new PropertyWithUnionType([]);
         $expectedSerializationString = '{"data":[]}';
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
     }
