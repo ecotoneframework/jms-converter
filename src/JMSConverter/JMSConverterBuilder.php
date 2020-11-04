@@ -45,11 +45,11 @@ class JMSConverterBuilder implements ConverterBuilder
     public function build(ReferenceSearchService $referenceSearchService): Converter
     {
         $builder = SerializerBuilder::create()
-            ->setMetadataDriverFactory(new ClassDefinitionDriverFactory(
+            ->setPropertyNamingStrategy(
                 $this->JMSConverterConfiguration->getNamingStrategy() === $this->JMSConverterConfiguration::IDENTICAL_PROPERTY_NAMING_STRATEGY
                     ? new IdenticalPropertyNamingStrategy()
                     : new CamelCaseNamingStrategy()
-            ))
+            )
             ->configureHandlers(function (HandlerRegistry $registry) use ($referenceSearchService) {
                 foreach ($this->converterHandlers as $converterHandler) {
                     $registry->registerHandler(
@@ -71,6 +71,7 @@ class JMSConverterBuilder implements ConverterBuilder
             $builder->setCacheDir($this->cacheDirectoryPath . DIRECTORY_SEPARATOR . "jms");
         }
 
+        $builder->setDocBlockTypeResolver(true);
         return new JMSConverter($builder->build());
     }
 
