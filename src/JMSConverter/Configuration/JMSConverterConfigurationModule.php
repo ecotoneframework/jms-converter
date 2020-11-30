@@ -66,11 +66,6 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
         return new self($converters);
     }
 
-    public function getName(): string
-    {
-        return "jmsConverter";
-    }
-
     public function prepare(Configuration $configuration, array $extensionObjects, ModuleReferenceSearchService $moduleReferenceSearchService): void
     {
         $jmsConverterConfiguration = JMSConverterConfiguration::createWithDefaults();
@@ -81,7 +76,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
         }
         $cacheDirectoryPath = null;
         foreach ($extensionObjects as $extensionObject) {
-            if ($extensionObject instanceof ApplicationConfiguration && $extensionObject->getEnvironment() === "prod") {
+            if ($extensionObject instanceof ApplicationConfiguration) {
                 $cacheDirectoryPath = $extensionObject->getCacheDirectoryPath();
             }
         }

@@ -19,22 +19,10 @@ class JMSConverterBuilder implements ConverterBuilder
     /**
      * @var JMSHandlerAdapter[]
      */
-    private $converterHandlers;
-    /**
-     * @var JMSConverterConfiguration
-     */
-    private $JMSConverterConfiguration;
-    /**
-     * @var string|null
-     */
-    private $cacheDirectoryPath;
+    private array $converterHandlers;
+    private JMSConverterConfiguration $JMSConverterConfiguration;
+    private ?string $cacheDirectoryPath;
 
-    /**
-     * JMSConverterBuilder constructor.
-     * @param JMSHandlerAdapter[] $converterHandlers
-     * @param JMSConverterConfiguration $JMSConverterConfiguration
-     * @param string|null $cacheDirectoryPath
-     */
     public function __construct(array $converterHandlers, JMSConverterConfiguration $JMSConverterConfiguration, ?string $cacheDirectoryPath)
     {
         $this->converterHandlers = $converterHandlers;
@@ -72,6 +60,7 @@ class JMSConverterBuilder implements ConverterBuilder
         }
 
         $builder->setDocBlockTypeResolver(true);
+
         return new JMSConverter($builder->build());
     }
 

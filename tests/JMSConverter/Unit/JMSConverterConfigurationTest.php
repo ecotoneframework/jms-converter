@@ -74,26 +74,7 @@ class JMSConverterConfigurationTest extends TestCase
         );
     }
 
-    public function test_registering_with_cache_directory_when_production()
-    {
-        $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([SimpleTypeToSimpleType::class])
-        );
-
-        $configuration            = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $applicationConfiguration = ApplicationConfiguration::createWithDefaults()
-            ->withCacheDirectoryPath("/tmp")
-            ->withEnvironment("prod");
-        $annotationConfiguration->prepare($configuration, [$applicationConfiguration], ModuleReferenceSearchService::createEmpty());
-
-        $this->assertEquals(
-            MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
-                ->registerConverter(new JMSConverterBuilder([], JMSConverterConfiguration::createWithDefaults(), "/tmp")),
-            $configuration,
-        );
-    }
-
-    public function test_registering_without_cache_directory_when_not_production()
+    public function test_always_registering_with_cache()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
             InMemoryAnnotationFinder::createFrom([SimpleTypeToSimpleType::class])
@@ -107,7 +88,7 @@ class JMSConverterConfigurationTest extends TestCase
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
-                ->registerConverter(new JMSConverterBuilder([], JMSConverterConfiguration::createWithDefaults(), null)),
+                ->registerConverter(new JMSConverterBuilder([], JMSConverterConfiguration::createWithDefaults(), "/tmp")),
             $configuration,
         );
     }
