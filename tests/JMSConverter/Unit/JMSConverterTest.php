@@ -4,6 +4,7 @@
 namespace Test\Ecotone\JMSConverter\Unit;
 
 
+use Ecotone\JMSConverter\JMSConverter;
 use Ecotone\JMSConverter\JMSConverterBuilder;
 use Ecotone\JMSConverter\JMSConverterConfiguration;
 use Ecotone\JMSConverter\JMSHandlerAdapter;
@@ -241,6 +242,16 @@ class JMSConverterTest extends TestCase
         $expectedSerializationObject = ["data" => ["data" => 3]];
 
         $serialized = $this->getJMSConverter([])->convert($toSerialize, TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP());
+        $this->assertEquals($expectedSerializationObject, $serialized);
+        $this->assertEquals($toSerialize, $this->getJMSConverter([])->convert($serialized, TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHP()));
+    }
+
+    public function test_converting_with_nulls()
+    {
+        $toSerialize = new TwoLevelNestedObjectProperty(new PropertyWithTypeAndMetadataType(null));
+        $expectedSerializationObject = ["data" => ["data" => null]];
+
+        $serialized = $this->getJMSConverter([])->convert($toSerialize, TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createWithParameters("application", "x-php", [JMSConverter::SERIALIZE_NULL_PARAMETER => 'true']));
         $this->assertEquals($expectedSerializationObject, $serialized);
         $this->assertEquals($toSerialize, $this->getJMSConverter([])->convert($serialized, TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createFromVariable($toSerialize), MediaType::createApplicationXPHP()));
     }
