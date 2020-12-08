@@ -2,16 +2,16 @@
 
 namespace Ecotone\JMSConverter\Configuration;
 
-use Ecotone\Messaging\Annotation\ApplicationContext;
-use Ecotone\Messaging\Config\ApplicationConfiguration;
+use Ecotone\Messaging\Annotation\ServiceContext;
+use Ecotone\Messaging\Config\ServiceConfiguration;
 use Ecotone\Messaging\Conversion\MediaType;
 
 class JMSDefaultSerialization
 {
-    #[ApplicationContext]
-    public function getDefaultConfig(): ApplicationConfiguration
+    #[ServiceContext]
+    public function getDefaultConfig(): ServiceConfiguration
     {
-        return ApplicationConfiguration::createWithDefaults()
+        return ServiceConfiguration::createWithDefaults()
             ->withDefaultSerializationMediaType(MediaType::APPLICATION_JSON);
     }
 }

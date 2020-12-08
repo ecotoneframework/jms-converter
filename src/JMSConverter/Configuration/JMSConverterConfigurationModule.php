@@ -14,7 +14,7 @@ use Ecotone\Messaging\Annotation\ModuleAnnotation;
 use Ecotone\Messaging\Config\Annotation\AnnotatedDefinitionReference;
 use Ecotone\Messaging\Config\Annotation\AnnotationModule;
 use Ecotone\Messaging\Config\Annotation\ModuleConfiguration\NoExternalConfigurationModule;
-use Ecotone\Messaging\Config\ApplicationConfiguration;
+use Ecotone\Messaging\Config\ServiceConfiguration;
 use Ecotone\Messaging\Config\Configuration;
 use Ecotone\Messaging\Config\ModuleReferenceSearchService;
 use Ecotone\Messaging\Handler\InterfaceToCall;
@@ -76,7 +76,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
         }
         $cacheDirectoryPath = null;
         foreach ($extensionObjects as $extensionObject) {
-            if ($extensionObject instanceof ApplicationConfiguration) {
+            if ($extensionObject instanceof ServiceConfiguration) {
                 $cacheDirectoryPath = $extensionObject->getCacheDirectoryPath();
             }
         }
@@ -86,7 +86,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
 
     public function canHandle($extensionObject): bool
     {
-        return $extensionObject instanceof ApplicationConfiguration
+        return $extensionObject instanceof ServiceConfiguration
                || $extensionObject instanceof JMSConverterConfiguration;
     }
 }

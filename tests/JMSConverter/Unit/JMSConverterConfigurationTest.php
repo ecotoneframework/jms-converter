@@ -9,7 +9,7 @@ use Ecotone\JMSConverter\JMSConverterBuilder;
 use Ecotone\JMSConverter\JMSConverterConfiguration;
 use Ecotone\JMSConverter\JMSHandlerAdapter;
 use Ecotone\Messaging\Config\Annotation\InMemoryAnnotationRegistrationService;
-use Ecotone\Messaging\Config\ApplicationConfiguration;
+use Ecotone\Messaging\Config\ServiceConfiguration;
 use Ecotone\Messaging\Config\InMemoryModuleMessaging;
 use Ecotone\Messaging\Config\MessagingSystemConfiguration;
 use Ecotone\Messaging\Config\ModuleReferenceSearchService;
@@ -81,7 +81,7 @@ class JMSConverterConfigurationTest extends TestCase
         );
 
         $configuration            = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $applicationConfiguration = ApplicationConfiguration::createWithDefaults()
+        $applicationConfiguration = ServiceConfiguration::createWithDefaults()
             ->withCacheDirectoryPath("/tmp")
             ->withEnvironment("dev");
         $annotationConfiguration->prepare($configuration, [$applicationConfiguration], ModuleReferenceSearchService::createEmpty());
