@@ -22,6 +22,10 @@ use Test\Ecotone\JMSConverter\Fixture\Configuration\ClassToClass\ClassToClassCon
 use Test\Ecotone\JMSConverter\Fixture\Configuration\SimpleTypeToSimpleType\SimpleTypeToSimpleType;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Status;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\StatusConverter;
+use Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter\AppointmentType;
+use Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter\AppointmentTypeConverter;
+use Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter\StandardAppointmentType;
+use Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter\TrialAppointmentType;
 
 class JMSConverterConfigurationTest extends TestCase
 {
@@ -49,6 +53,63 @@ class JMSConverterConfigurationTest extends TestCase
                                 TypeDescriptor::createStringType(),
                                 TypeDescriptor::create(Status::class),
                                 StatusConverter::class,
+                                "convertTo"
+                            )
+                        ], JMSConverterConfiguration::createWithDefaults(), null
+                    )
+                ),
+            $configuration,
+        );
+    }
+
+    public function test_register_union_converter()
+    {
+        $annotationConfiguration = JMSConverterConfigurationModule::create(
+            InMemoryAnnotationFinder::createFrom([AppointmentTypeConverter::class])
+        );
+
+        $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+
+        $this->assertEquals(
+            MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
+                ->registerConverter(
+                    new JMSConverterBuilder(
+                        [
+                            JMSHandlerAdapter::create(
+                                TypeDescriptor::create(AppointmentType::class),
+                                TypeDescriptor::createStringType(),
+                                AppointmentTypeConverter::class,
+                                "convertFrom"
+                            ),
+                            JMSHandlerAdapter::create(
+                                TypeDescriptor::create(StandardAppointmentType::class),
+                                TypeDescriptor::createStringType(),
+                                AppointmentTypeConverter::class,
+                                "convertFrom"
+                            ),
+                            JMSHandlerAdapter::create(
+                                TypeDescriptor::create(TrialAppointmentType::class),
+                                TypeDescriptor::createStringType(),
+                                AppointmentTypeConverter::class,
+                                "convertFrom"
+                            ),
+                            JMSHandlerAdapter::create(
+                                TypeDescriptor::createStringType(),
+                                TypeDescriptor::create(AppointmentType::class),
+                                AppointmentTypeConverter::class,
+                                "convertTo"
+                            ),
+                            JMSHandlerAdapter::create(
+                                TypeDescriptor::createStringType(),
+                                TypeDescriptor::create(StandardAppointmentType::class),
+                                AppointmentTypeConverter::class,
+                                "convertTo"
+                            ),
+                            JMSHandlerAdapter::create(
+                                TypeDescriptor::createStringType(),
+                                TypeDescriptor::create(TrialAppointmentType::class),
+                                AppointmentTypeConverter::class,
                                 "convertTo"
                             )
                         ], JMSConverterConfiguration::createWithDefaults(), null

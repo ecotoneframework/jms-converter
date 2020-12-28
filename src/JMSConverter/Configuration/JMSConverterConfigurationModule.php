@@ -45,22 +45,30 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
         foreach ($registrations as $registration) {
             $reference = AnnotatedDefinitionReference::getReferenceFor($registration);
             $interfaceToCall = InterfaceToCall::create($registration->getClassName(), $registration->getMethodName());
-            $fromType = $interfaceToCall->getFirstParameter()->getTypeDescriptor();
-            $toType = $interfaceToCall->getReturnType();
 
-            if (!$fromType->isClassOrInterface() && !$toType->isClassOrInterface()) {
-                continue;
-            }
-            if ($fromType->isClassOrInterface() && $toType->isClassOrInterface()) {
-                continue;
-            }
+            $fromTypes = $interfaceToCall->getFirstParameter()->getTypeDescriptor();
+            $fromTypes = $fromTypes->isUnionType() ? $fromTypes->getUnionTypes() : [$fromTypes];
 
-            $converters[] = JMSHandlerAdapter::create(
-                $fromType,
-                $toType,
-                $reference,
-                $registration->getMethodName(),
-            );
+            $toTypes = $interfaceToCall->getReturnType();
+            $toTypes = $toTypes->isUnionType() ? $toTypes->getUnionTypes() : [$toTypes];
+
+            foreach ($fromTypes as $fromType) {
+                foreach ($toTypes as $toType) {
+                    if (!$fromType->isClassOrInterface() && !$toType->isClassOrInterface()) {
+                        continue;
+                    }
+                    if ($fromType->isClassOrInterface() && $toType->isClassOrInterface()) {
+                        continue;
+                    }
+
+                    $converters[] = JMSHandlerAdapter::create(
+                        $fromType,
+                        $toType,
+                        $reference,
+                        $registration->getMethodName(),
+                    );
+                }
+            }
         }
 
         return new self($converters);
