@@ -15,7 +15,6 @@ use JMS\Serializer\SerializerBuilder;
 
 class JMSConverterBuilder implements ConverterBuilder
 {
-    const JMS_SERIALIZER_REFERENCE_NAME = "jms_serializer";
     /**
      * @var JMSHandlerAdapter[]
      */

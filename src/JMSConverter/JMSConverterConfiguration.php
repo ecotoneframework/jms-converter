@@ -11,7 +11,6 @@ namespace Ecotone\JMSConverter;
 class JMSConverterConfiguration
 {
     const IDENTICAL_PROPERTY_NAMING_STRATEGY = "identicalPropertyNamingStrategy";
-    const CAMEL_CASE_NAMING_STRATEGY = "camelCaseStrategy";
 
     /**
      * @var string
