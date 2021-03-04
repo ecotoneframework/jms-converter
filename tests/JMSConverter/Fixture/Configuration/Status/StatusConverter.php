@@ -3,8 +3,8 @@
 
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\Status;
 
-use Ecotone\Messaging\Annotation\Converter;
-use Ecotone\Messaging\Annotation\ConverterClass;
+use Ecotone\Messaging\Attribute\Converter;
+use Ecotone\Messaging\Attribute\ConverterClass;
 
 class StatusConverter
 {

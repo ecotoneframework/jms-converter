@@ -3,8 +3,8 @@
 
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\ArrayConversion;
 
-use Ecotone\Messaging\Annotation\Converter;
-use Ecotone\Messaging\Annotation\ConverterClass;
+use Ecotone\Messaging\Attribute\Converter;
+use Ecotone\Messaging\Attribute\ConverterClass;
 use stdClass;
 
 class ClassToArrayConverter

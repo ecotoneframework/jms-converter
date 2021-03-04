@@ -4,8 +4,8 @@
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\ArrayConversion;
 
 
-use Ecotone\Messaging\Annotation\Converter;
-use Ecotone\Messaging\Annotation\MessageEndpoint;
+use Ecotone\Messaging\Attribute\Converter;
+use Ecotone\Messaging\Attribute\MessageEndpoint;
 
 class ArrayToArrayConverter
 {

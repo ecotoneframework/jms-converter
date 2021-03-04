@@ -2,7 +2,7 @@
 
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter;
 
-use Ecotone\Messaging\Annotation\Converter;
+use Ecotone\Messaging\Attribute\Converter;
 
 class AppointmentTypeConverter
 {
