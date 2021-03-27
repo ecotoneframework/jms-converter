@@ -13,19 +13,20 @@ use JMS\Serializer\SerializerInterface;
 class JMSConverter implements Converter
 {
     const SERIALIZE_NULL_PARAMETER = "serializeNull";
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
 
-    public function __construct(Serializer $serializer)
+    private SerializerInterface $serializer;
+    private JMSConverterConfiguration $jmsConverterConfiguration;
+
+    public function __construct(Serializer $serializer, JMSConverterConfiguration $jmsConverterConfiguration)
     {
         $this->serializer = $serializer;
+        $this->jmsConverterConfiguration = $jmsConverterConfiguration;
     }
 
     public function convert($source, TypeDescriptor $sourceType, MediaType $sourceMediaType, TypeDescriptor $targetType, MediaType $targetMediaType)
     {
-        $serializeNulls = $targetMediaType->hasParameter(self::SERIALIZE_NULL_PARAMETER) ? $targetMediaType->getParameter(self::SERIALIZE_NULL_PARAMETER) === 'true' : false;
+        $serializeNulls = $targetMediaType->hasParameter(self::SERIALIZE_NULL_PARAMETER) ? $targetMediaType->getParameter(self::SERIALIZE_NULL_PARAMETER) === 'true' : $this->jmsConverterConfiguration->getDefaultNullSerialization();
+
         $context = new SerializationContext();
         if ($serializeNulls) {
             $context->setSerializeNull(true);

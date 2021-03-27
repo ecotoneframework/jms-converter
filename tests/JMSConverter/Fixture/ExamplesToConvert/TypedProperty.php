@@ -12,7 +12,7 @@ class TypedProperty
      * TypedProperty constructor.
      * @param $data
      */
-    public function __construct($data)
+    public function __construct(int $data)
     {
         $this->data = $data;
     }

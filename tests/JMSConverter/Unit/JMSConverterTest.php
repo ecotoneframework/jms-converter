@@ -20,6 +20,7 @@ use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Person;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\Status;
 use Test\Ecotone\JMSConverter\Fixture\Configuration\Status\StatusConverter;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\CollectionProperty;
+use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\NullableProperty;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PersonAbstractClass;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PersonInterface;
 use Test\Ecotone\JMSConverter\Fixture\ExamplesToConvert\PropertiesWithDocblockTypes;
@@ -58,9 +59,6 @@ class JMSConverterTest extends TestCase
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
     }
 
-    /**
-     * @requires PHP >= 7.4
-     */
     public function test_converting_with_typed_property()
     {
         $toSerialize = new TypedProperty(3);
@@ -110,6 +108,28 @@ class JMSConverterTest extends TestCase
         $expectedSerializationString = '{"data":"100"}';
 
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
+    }
+
+    public function test_converting_with_ignoring_null()
+    {
+        $toSerialize = ["test" => null];
+        $expectedSerializationString = '[]';
+
+        $this->assertEquals(
+            $expectedSerializationString,
+            $this->serializeToJson($toSerialize, [], JMSConverterConfiguration::createWithDefaults()->withDefaultNullSerialization(false))
+        );
+    }
+
+    public function test_converting_with_keeping_null()
+    {
+        $toSerialize = ["test" => null];
+        $expectedSerializationString = '{"test":null}';
+
+        $this->assertEquals(
+            $expectedSerializationString,
+            $this->serializeToJson($toSerialize, [], JMSConverterConfiguration::createWithDefaults()->withDefaultNullSerialization(true))
+        );
     }
 
     public function test_throwing_exception_if_converted_type_is_union_type()
@@ -352,31 +372,31 @@ class JMSConverterTest extends TestCase
         );
     }
 
-    private function assertSerializationAndDeserializationWithJSON(object $toSerialize, string $expectedSerializationString, $jmsHandlerAdapters = []): void
+    private function assertSerializationAndDeserializationWithJSON(object|array $toSerialize, string $expectedSerializationString, $jmsHandlerAdapters = [], ?JMSConverterConfiguration $configuration = null): void
     {
-        $serialized = $this->serializeToJson($toSerialize, $jmsHandlerAdapters);
+        $serialized = $this->serializeToJson($toSerialize, $jmsHandlerAdapters, $configuration);
         $this->assertEquals($expectedSerializationString, $serialized);
-        $this->assertEquals($toSerialize, $this->deserialize($serialized, get_class($toSerialize), $jmsHandlerAdapters));
+        $this->assertEquals($toSerialize, $this->deserialize($serialized, is_array($toSerialize) ? TypeDescriptor::ARRAY : get_class($toSerialize), $jmsHandlerAdapters));
     }
 
-    private function serializeToJson($data, $jmsHandlerAdapters)
+    private function serializeToJson($data, array $jmsHandlerAdapters, ?JMSConverterConfiguration $configuration = null)
     {
-        return $this->getJMSConverter($jmsHandlerAdapters)->convert($data, TypeDescriptor::createFromVariable($data), MediaType::createApplicationXPHP(), TypeDescriptor::createStringType(), MediaType::createApplicationJson());
+        return $this->getJMSConverter($jmsHandlerAdapters, $configuration)->convert($data, TypeDescriptor::createFromVariable($data), MediaType::createApplicationXPHP(), TypeDescriptor::createStringType(), MediaType::createApplicationJson());
     }
 
-    private function serializeToArray($data, $jmsHandlerAdapters)
+    private function serializeToArray($data, array $jmsHandlerAdapters)
     {
         return $this->getJMSConverter($jmsHandlerAdapters)->convert($data, TypeDescriptor::createFromVariable($data), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP());
     }
 
-    private function deserialize(string $data, string $type, $jmsHandlerAdapters)
+    private function deserialize(string $data, string $type, array $jmsHandlerAdapters)
     {
         return $this->getJMSConverter($jmsHandlerAdapters)->convert($data, TypeDescriptor::createStringType(), MediaType::createApplicationJson(), TypeDescriptor::create($type), MediaType::createApplicationXPHP(), TypeDescriptor::create($type));
     }
 
-    private function getJMSConverter($jmsHandlerAdapters) : Converter
+    private function getJMSConverter(array $jmsHandlerAdapters, ?JMSConverterConfiguration $configuration = null) : Converter
     {
-        return (new JMSConverterBuilder($jmsHandlerAdapters, JMSConverterConfiguration::createWithDefaults(), null))->build(InMemoryReferenceSearchService::createWith([
+        return (new JMSConverterBuilder($jmsHandlerAdapters, $configuration ? $configuration : JMSConverterConfiguration::createWithDefaults(), null))->build(InMemoryReferenceSearchService::createWith([
             StatusConverter::class => new StatusConverter(),
             ClassToArrayConverter::class => new ClassToArrayConverter()
         ]));

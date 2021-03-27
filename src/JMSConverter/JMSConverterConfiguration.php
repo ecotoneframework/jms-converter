@@ -12,10 +12,8 @@ class JMSConverterConfiguration
 {
     const IDENTICAL_PROPERTY_NAMING_STRATEGY = "identicalPropertyNamingStrategy";
 
-    /**
-     * @var string
-     */
-    private $namingStrategy = self::IDENTICAL_PROPERTY_NAMING_STRATEGY;
+    private string $namingStrategy = self::IDENTICAL_PROPERTY_NAMING_STRATEGY;
+    private bool $defaultNullSerialization = false;
 
     private function __construct()
     {
@@ -26,22 +24,27 @@ class JMSConverterConfiguration
         return new self();
     }
 
-    /**
-     * @param string $namingStrategy
-     * @return $this
-     */
-    public function withNamingStrategy(string $namingStrategy)
+    public function withNamingStrategy(string $namingStrategy): static
     {
         $this->namingStrategy = $namingStrategy;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
+    public function withDefaultNullSerialization(bool $isEnabled): static
+    {
+        $this->defaultNullSerialization = $isEnabled;
+
+        return $this;
+    }
+
     public function getNamingStrategy(): string
     {
         return $this->namingStrategy;
+    }
+
+    public function getDefaultNullSerialization() : bool
+    {
+        return $this->defaultNullSerialization;
     }
 }

@@ -19,13 +19,13 @@ class JMSConverterBuilder implements ConverterBuilder
      * @var JMSHandlerAdapter[]
      */
     private array $converterHandlers;
-    private JMSConverterConfiguration $JMSConverterConfiguration;
+    private JMSConverterConfiguration $jmsConverterConfiguration;
     private ?string $cacheDirectoryPath;
 
     public function __construct(array $converterHandlers, JMSConverterConfiguration $JMSConverterConfiguration, ?string $cacheDirectoryPath)
     {
         $this->converterHandlers = $converterHandlers;
-        $this->JMSConverterConfiguration = $JMSConverterConfiguration;
+        $this->jmsConverterConfiguration = $JMSConverterConfiguration;
         $this->cacheDirectoryPath = $cacheDirectoryPath;
     }
 
@@ -33,7 +33,7 @@ class JMSConverterBuilder implements ConverterBuilder
     {
         $builder = SerializerBuilder::create()
             ->setPropertyNamingStrategy(
-                $this->JMSConverterConfiguration->getNamingStrategy() === $this->JMSConverterConfiguration::IDENTICAL_PROPERTY_NAMING_STRATEGY
+                $this->jmsConverterConfiguration->getNamingStrategy() === $this->jmsConverterConfiguration::IDENTICAL_PROPERTY_NAMING_STRATEGY
                     ? new IdenticalPropertyNamingStrategy()
                     : new CamelCaseNamingStrategy()
             )
@@ -60,7 +60,7 @@ class JMSConverterBuilder implements ConverterBuilder
 
         $builder->setDocBlockTypeResolver(true);
 
-        return new JMSConverter($builder->build());
+        return new JMSConverter($builder->build(), $this->jmsConverterConfiguration);
     }
 
     public function getRequiredReferences(): array
