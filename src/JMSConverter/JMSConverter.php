@@ -3,6 +3,7 @@
 
 namespace Ecotone\JMSConverter;
 
+use Ecotone\Messaging\Conversion\ConversionException;
 use Ecotone\Messaging\Conversion\Converter;
 use Ecotone\Messaging\Conversion\MediaType;
 use Ecotone\Messaging\Handler\TypeDescriptor;
@@ -32,32 +33,36 @@ class JMSConverter implements Converter
             $context->setSerializeNull(true);
         }
 
-        if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP) && $targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP)) {
-            if ($sourceType->isIterable() && !$targetType->isNonCollectionArray()) {
-                return $this->serializer->fromArray($source, $targetType->toString());
-            }else if ($targetType->isIterable()) {
-                return $this->serializer->toArray($source, $context);
-            }else {
-                throw new \InvalidArgumentException("Can't conversion from {$sourceMediaType->toString()}:{$sourceType->toString()} to {$targetMediaType->toString()}:{$targetMediaType->toString()}");
+        try {
+            if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP) && $targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP)) {
+                if ($sourceType->isIterable() && !$targetType->isNonCollectionArray()) {
+                    return $this->serializer->fromArray($source, $targetType->toString());
+                }else if ($targetType->isIterable()) {
+                    return $this->serializer->toArray($source, $context);
+                }else {
+                    throw new \InvalidArgumentException("Can't conversion from {$sourceMediaType->toString()}:{$sourceType->toString()} to {$targetMediaType->toString()}:{$targetMediaType->toString()}");
+                }
             }
-        }
 
-        if ($targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP)) {
-            if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_JSON)) {
-                return $this->serializer->deserialize($source, $targetType->toString(), "json");
-            }else if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_XML)) {
-                return $this->serializer->deserialize($source, $targetType->toString(), "xml");
-            }else {
-                throw new \InvalidArgumentException("Can't conversion from {$sourceMediaType->toString()}:{$sourceType->toString()} to {$targetMediaType->toString()}:{$targetMediaType->toString()}");
+            if ($targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP)) {
+                if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_JSON)) {
+                    return $this->serializer->deserialize($source, $targetType->toString(), "json");
+                }else if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_XML)) {
+                    return $this->serializer->deserialize($source, $targetType->toString(), "xml");
+                }else {
+                    throw new \InvalidArgumentException("Can't conversion from {$sourceMediaType->toString()}:{$sourceType->toString()} to {$targetMediaType->toString()}:{$targetMediaType->toString()}");
+                }
+            } else {
+                if ($targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_JSON)) {
+                    return $this->serializer->serialize($source, "json", $context);
+                }else if ($targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_XML)) {
+                    return $this->serializer->serialize($source, "xml", $context);
+                }else {
+                    throw new \InvalidArgumentException("Can't conversion from {$sourceMediaType->toString()}:{$sourceType->toString()} to {$targetMediaType->toString()}:{$targetMediaType->toString()}");
+                }
             }
-        } else {
-            if ($targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_JSON)) {
-                return $this->serializer->serialize($source, "json", $context);
-            }else if ($targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_XML)) {
-                return $this->serializer->serialize($source, "xml", $context);
-            }else {
-                throw new \InvalidArgumentException("Can't conversion from {$sourceMediaType->toString()}:{$sourceType->toString()} to {$targetMediaType->toString()}:{$targetMediaType->toString()}");
-            }
+        }catch (\RuntimeException $exception) {
+            throw ConversionException::createFromPreviousException("Can't convert from {$sourceMediaType}:{$sourceType} to {$targetMediaType}:{$targetType} " . $exception->getMessage(), $exception);
         }
     }
 
