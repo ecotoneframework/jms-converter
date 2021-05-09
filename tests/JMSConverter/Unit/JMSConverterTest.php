@@ -372,6 +372,23 @@ class JMSConverterTest extends TestCase
         );
     }
 
+    public function test_not_matching_conversion_from_array_to_array()
+    {
+        $this->assertFalse(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP())
+        );
+    }
+
+    public function test_matching_conversion_from_array_to_object_and_opposite()
+    {
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::create(\stdClass::class), MediaType::createApplicationXPHP())
+        );
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::create(\stdClass::class), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP())
+        );
+    }
+
     private function assertSerializationAndDeserializationWithJSON(object|array $toSerialize, string $expectedSerializationString, $jmsHandlerAdapters = [], ?JMSConverterConfiguration $configuration = null): void
     {
         $serialized = $this->serializeToJson($toSerialize, $jmsHandlerAdapters, $configuration);
