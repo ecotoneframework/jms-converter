@@ -372,6 +372,16 @@ class JMSConverterTest extends TestCase
         );
     }
 
+    public function test_matching_conversion_from_php_array_to_php_array()
+    {
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP())
+        );
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP())
+        );
+    }
+
     public function test_matching_conversion_from_php_collection_of_objects_to_array()
     {
         $this->assertTrue(
@@ -389,13 +399,6 @@ class JMSConverterTest extends TestCase
         );
         $this->assertFalse(
             $this->getJMSConverter([])->matches(TypeDescriptor::createStringType(), MediaType::createApplicationOcetStream(), TypeDescriptor::create(Person::class), MediaType::createApplicationXPHP())
-        );
-    }
-
-    public function test_not_matching_conversion_from_array_to_array()
-    {
-        $this->assertFalse(
-            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP())
         );
     }
 
