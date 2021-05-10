@@ -372,6 +372,16 @@ class JMSConverterTest extends TestCase
         );
     }
 
+    public function test_matching_conversion_from_php_collection_of_objects_to_array()
+    {
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createCollection("object"), MediaType::createApplicationXPHP(), TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP())
+        );
+        $this->assertTrue(
+            $this->getJMSConverter([])->matches(TypeDescriptor::createArrayType(), MediaType::createApplicationXPHP(), TypeDescriptor::createCollection("object"), MediaType::createApplicationXPHP())
+        );
+    }
+
     public function test_not_matching_conversion_from_object_to_format_different_than_xml_and_json()
     {
         $this->assertFalse(
