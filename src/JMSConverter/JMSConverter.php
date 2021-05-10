@@ -69,21 +69,13 @@ class JMSConverter implements Converter
     public function matches(TypeDescriptor $sourceType, MediaType $sourceMediaType, TypeDescriptor $targetType, MediaType $targetMediaType): bool
     {
         if ($sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP) && $targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_X_PHP)) {
-            return $sourceType->isIterable() && $targetType->isClassOrInterface()
-                   || $sourceType->isClassOrInterface() && $targetType->isIterable();
+            return $sourceType->isIterable() && ($targetType->isClassOrInterface() || $targetType->isCollection())
+                   || ($sourceType->isClassOrInterface() || $sourceType->isCollection()) && $targetType->isIterable();
         }
 
         if (!$sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_JSON) && !$sourceMediaType->isCompatibleWithParsed(MediaType::APPLICATION_XML)
             && !$targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_JSON) && !$targetMediaType->isCompatibleWithParsed(MediaType::APPLICATION_XML)
         ) {
-            return false;
-        }
-
-        if ($sourceType->isInterface() || $targetType->isInterface()) {
-            return false;
-        }
-
-        if ($sourceType->isAbstractClass() || $targetType->isAbstractClass()) {
             return false;
         }
 
