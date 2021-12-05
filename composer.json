@@ -34,7 +34,7 @@
     }
   },
   "require": {
-    "ecotone/ecotone": "^1.0.0",
+    "ecotone/ecotone": "1.6.2",
     "jms/serializer": ">=3.11",
     "doctrine/cache": ">=1.10"
   },
