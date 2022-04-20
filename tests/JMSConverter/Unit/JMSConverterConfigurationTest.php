@@ -13,6 +13,7 @@ use Ecotone\Messaging\Config\ServiceConfiguration;
 use Ecotone\Messaging\Config\InMemoryModuleMessaging;
 use Ecotone\Messaging\Config\MessagingSystemConfiguration;
 use Ecotone\Messaging\Config\ModuleReferenceSearchService;
+use Ecotone\Messaging\Handler\InterfaceToCallRegistry;
 use Ecotone\Messaging\Handler\TypeDescriptor;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -32,11 +33,12 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_registering_converter_and_convert()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([StatusConverter::class])
+            InMemoryAnnotationFinder::createFrom([StatusConverter::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -65,11 +67,12 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_register_union_converter()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([AppointmentTypeConverter::class])
+            InMemoryAnnotationFinder::createFrom([AppointmentTypeConverter::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -122,11 +125,12 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_not_registering_converter_from_simple_type_to_simple_type()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([SimpleTypeToSimpleType::class])
+            InMemoryAnnotationFinder::createFrom([SimpleTypeToSimpleType::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -138,14 +142,15 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_always_registering_with_cache()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([SimpleTypeToSimpleType::class])
+            InMemoryAnnotationFinder::createFrom([SimpleTypeToSimpleType::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration            = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
         $applicationConfiguration = ServiceConfiguration::createWithDefaults()
             ->withCacheDirectoryPath("/tmp")
             ->withEnvironment("dev");
-        $annotationConfiguration->prepare($configuration, [$applicationConfiguration], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [$applicationConfiguration], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -157,11 +162,12 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_not_registering_converter_from_class_to_class()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([ClassToClassConverter::class])
+            InMemoryAnnotationFinder::createFrom([ClassToClassConverter::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -173,11 +179,12 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_not_registering_converter_from_iterable_to_iterable()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([ArrayToArrayConverter::class])
+            InMemoryAnnotationFinder::createFrom([ArrayToArrayConverter::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -189,11 +196,12 @@ class JMSConverterConfigurationTest extends TestCase
     public function test_registering_converter_from_array_to_class()
     {
         $annotationConfiguration = JMSConverterConfigurationModule::create(
-            InMemoryAnnotationFinder::createFrom([ClassToArrayConverter::class])
+            InMemoryAnnotationFinder::createFrom([ClassToArrayConverter::class]),
+            InterfaceToCallRegistry::createEmpty()
         );
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())
@@ -221,10 +229,10 @@ class JMSConverterConfigurationTest extends TestCase
 
     public function test_configuring_with_different_options()
     {
-        $annotationConfiguration = JMSConverterConfigurationModule::create(InMemoryAnnotationFinder::createEmpty());
+        $annotationConfiguration = JMSConverterConfigurationModule::create(InMemoryAnnotationFinder::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $configuration = MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty());
-        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty());
+        $annotationConfiguration->prepare($configuration, [], ModuleReferenceSearchService::createEmpty(), InterfaceToCallRegistry::createEmpty());
 
         $this->assertEquals(
             MessagingSystemConfiguration::prepareWithDefaults(InMemoryModuleMessaging::createEmpty())

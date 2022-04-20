@@ -18,6 +18,7 @@ use Ecotone\Messaging\Config\ServiceConfiguration;
 use Ecotone\Messaging\Config\Configuration;
 use Ecotone\Messaging\Config\ModuleReferenceSearchService;
 use Ecotone\Messaging\Handler\InterfaceToCall;
+use Ecotone\Messaging\Handler\InterfaceToCallRegistry;
 
 #[ModuleAnnotation]
 class JMSConverterConfigurationModule extends NoExternalConfigurationModule implements AnnotationModule
@@ -37,7 +38,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
     }
 
 
-    public static function create(AnnotationFinder $annotationRegistrationService): static
+    public static function create(AnnotationFinder $annotationRegistrationService, InterfaceToCallRegistry $interfaceToCallRegistry): static
     {
         $registrations = $annotationRegistrationService->findAnnotatedMethods(Converter::class);
 
@@ -74,7 +75,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
         return new self($converters);
     }
 
-    public function prepare(Configuration $configuration, array $extensionObjects, ModuleReferenceSearchService $moduleReferenceSearchService): void
+    public function prepare(Configuration $configuration, array $extensionObjects, ModuleReferenceSearchService $moduleReferenceSearchService, InterfaceToCallRegistry $interfaceToCallRegistry): void
     {
         $jmsConverterConfiguration = JMSConverterConfiguration::createWithDefaults();
         foreach ($extensionObjects as $extensionObject) {
