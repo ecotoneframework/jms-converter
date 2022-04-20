@@ -45,7 +45,7 @@ class JMSConverterConfigurationModule extends NoExternalConfigurationModule impl
         $converters = [];
         foreach ($registrations as $registration) {
             $reference = AnnotatedDefinitionReference::getReferenceFor($registration);
-            $interfaceToCall = InterfaceToCall::create($registration->getClassName(), $registration->getMethodName());
+            $interfaceToCall = $interfaceToCallRegistry->getFor($registration->getClassName(), $registration->getMethodName());
 
             $fromTypes = $interfaceToCall->getFirstParameter()->getTypeDescriptor();
             $fromTypes = $fromTypes->isUnionType() ? $fromTypes->getUnionTypes() : [$fromTypes];
