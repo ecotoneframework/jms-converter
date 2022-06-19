@@ -34,7 +34,7 @@
     }
   },
   "require": {
-    "ecotone/ecotone": "~1.27.0",
+    "ecotone/ecotone": "~1.27.1",
     "jms/serializer": ">=3.11",
     "doctrine/cache": ">=1.10"
   },
@@ -45,7 +45,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.27.0-dev"
+      "dev-master": "1.27.1-dev"
     }
   }
 }
