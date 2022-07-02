@@ -35,7 +35,7 @@
   },
   "require": {
     "php": "^8.0",
-    "ecotone/ecotone": "^1.31.1",
+    "ecotone/ecotone": "~1.32.0",
     "jms/serializer": "^3.17",
     "symfony/cache": "^5.4|^6.1"
   },
@@ -46,7 +46,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.31.1-dev"
+      "dev-master": "1.32.0-dev"
     }
   }
 }
