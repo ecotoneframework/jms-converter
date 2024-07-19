@@ -33,6 +33,10 @@ use Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter\TrialAppointm
 /**
  * @internal
  */
+/**
+ * licence Apache-2.0
+ * @internal
+ */
 class JMSConverterConfigurationTest extends TestCase
 {
     public function test_registering_converter_and_convert()
