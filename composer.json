@@ -19,6 +19,8 @@
         "messaging",
         "ecotone",
         "serializer",
+        "jms",
+        "jms-serializer",
         "integration",
         "json",
         "xml",
@@ -38,7 +40,7 @@
         }
     },
     "require": {
-        "ecotone/ecotone": "~1.313.1",
+        "ecotone/ecotone": "~1.313.2",
         "jms/serializer": "^3.32",
         "symfony/cache": "^6.4|^7.0|^8.0"
     },
@@ -58,7 +60,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.313.1-dev"
+            "dev-main": "1.313.2-dev"
         },
         "ecotone": {
             "repository": "jms-converter"
@@ -74,7 +76,7 @@
                 "description": "Allows to use Enterprise features of Ecotone. For more information please write to support@simplycodedsoftware.com"
             }
         },
-        "release-time": "2026-05-18 19:18:46"
+        "release-time": "2026-05-22 17:45:28"
     },
     "config": {
         "sort-packages": true
