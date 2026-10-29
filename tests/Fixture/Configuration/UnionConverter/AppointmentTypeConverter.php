@@ -2,7 +2,7 @@
 
 namespace Test\Ecotone\JMSConverter\Fixture\Configuration\UnionConverter;
 
-use Ecotone\Api\Attribute\Converter;
+use Ecotone\Messaging\Attribute\Converter;
 
 /**
  * licence Apache-2.0

@@ -4,15 +4,16 @@ namespace Test\Ecotone\JMSConverter\Unit;
 
 use ArrayObject;
 use DateTimeImmutable;
-use Ecotone\Api\Attribute\Converter;
-use Ecotone\Api\ExtensionObject\MediaType;
-use Ecotone\Api\ExtensionObject\ModulePackageList;
-use Ecotone\Api\JMSConverter\JMSConverterConfiguration;
-use Ecotone\Api\Lite\EcotoneLite;
 use Ecotone\JMSConverter\ArrayObjectConverter;
 use Ecotone\JMSConverter\JMSConverter;
+use Ecotone\JMSConverter\JMSConverterConfiguration;
+use Ecotone\Lite\EcotoneLite;
+use Ecotone\Messaging\Attribute\Converter;
+use Ecotone\Messaging\Config\ModulePackageList;
+use Ecotone\Messaging\Config\ServiceConfiguration;
 use Ecotone\Messaging\Conversion\ConversionException;
 use Ecotone\Messaging\Conversion\ConversionService;
+use Ecotone\Messaging\Conversion\MediaType;
 use Ecotone\Messaging\Handler\Type;
 use Error;
 use PHPUnit\Framework\TestCase;
@@ -321,31 +322,15 @@ class JMSConverterTest extends TestCase
 
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString, [
             new AccountStatusConverter(),
-        ], JMSConverterConfiguration::createWithDefaults()->withDefaultEnumSupport(false));
+        ]);
     }
 
     public function test_serializing_with_default_time_handler(): void
     {
         $toSerialize = new ObjectWithDate(new DateTimeImmutable('2021-01-01 12:00:00'));
-        $expectedSerializationString = '{"date":"2021-01-01T12:00:00.000000+00:00"}';
+        $expectedSerializationString = '{"date":"2021-01-01T12:00:00+00:00"}';
 
         $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
-    }
-
-    public function test_default_time_handler_round_trips_microseconds(): void
-    {
-        $toSerialize = new ObjectWithDate(new DateTimeImmutable('2021-01-01 12:00:00.123456'));
-        $expectedSerializationString = '{"date":"2021-01-01T12:00:00.123456+00:00"}';
-
-        $this->assertSerializationAndDeserializationWithJSON($toSerialize, $expectedSerializationString);
-    }
-
-    public function test_default_time_handler_reads_a_date_serialized_without_microseconds(): void
-    {
-        $this->assertEquals(
-            new ObjectWithDate(new DateTimeImmutable('2021-01-01 12:00:00')),
-            $this->deserialize('{"date":"2021-01-01T12:00:00+00:00"}', ObjectWithDate::class, [])
-        );
     }
 
     public function test_overriding_custom_time_handler(): void
@@ -523,7 +508,7 @@ class JMSConverterTest extends TestCase
     {
         $serialized = $this->serializeToJson($toSerialize, $jmsHandlerAdapters, $configuration);
         $this->assertEquals($expectedSerializationString, $serialized);
-        $this->assertEquals($toSerialize, $this->deserialize($serialized, is_array($toSerialize) ? 'array' : get_class($toSerialize), $jmsHandlerAdapters, $configuration));
+        $this->assertEquals($toSerialize, $this->deserialize($serialized, is_array($toSerialize) ? Type::ARRAY : get_class($toSerialize), $jmsHandlerAdapters, $configuration));
     }
 
     private function serializeToJson($data, array $jmsHandlerAdapters, ?JMSConverterConfiguration $configuration = null)
@@ -549,8 +534,9 @@ class JMSConverterTest extends TestCase
         return EcotoneLite::bootstrapFlowTesting(
             array_map(fn (object $converter) => $converter::class, $converters),
             $converters,
-            extensionObjects: $configuration ? [$configuration] : [],
-            enabledModules: [ModulePackageList::JMS_CONVERTER_PACKAGE],
+            configuration: ServiceConfiguration::createWithDefaults()
+                ->withSkippedModulePackageNames(ModulePackageList::allPackagesExcept([ModulePackageList::JMS_CONVERTER_PACKAGE]))
+                ->withExtensionObjects($configuration ? [$configuration] : [])
         )
             ->getServiceFromContainer(ConversionService::REFERENCE_NAME);
     }

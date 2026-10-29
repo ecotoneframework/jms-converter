@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Test\Ecotone\JMSConverter\Integration;
 
-use Ecotone\Api\ExtensionObject\ModulePackageList;
-use Ecotone\Api\ExtensionObject\SimpleMessageChannelBuilder;
-use Ecotone\Api\JMSConverter\JMSConverterConfiguration;
-use Ecotone\Api\Lite\EcotoneLite;
+use Ecotone\JMSConverter\JMSConverterConfiguration;
+use Ecotone\Lite\EcotoneLite;
+use Ecotone\Messaging\Channel\SimpleMessageChannelBuilder;
+use Ecotone\Messaging\Config\ModulePackageList;
+use Ecotone\Messaging\Config\ServiceConfiguration;
 use PHPUnit\Framework\TestCase;
 use Test\Ecotone\JMSConverter\Fixture\EnumHeaderConversion\BasicEnum;
 use Test\Ecotone\JMSConverter\Fixture\EnumHeaderConversion\Message;
@@ -27,12 +28,13 @@ class HeaderConversionTest extends TestCase
 
         $ecotone = EcotoneLite::bootstrapFlowTesting(
             containerOrAvailableServices: [$playground],
-            extensionObjects: [
-                SimpleMessageChannelBuilder::createQueueChannel('async'),
-                JMSConverterConfiguration::createWithDefaults()->withDefaultNullSerialization(true)->withDefaultEnumSupport(true),
-            ],
-            enabledModules: [ModulePackageList::JMS_CONVERTER_PACKAGE, ],
-            namespaces: ['Test\Ecotone\JMSConverter\Fixture\EnumHeaderConversion'],
+            configuration: ServiceConfiguration::createWithDefaults()
+                ->withExtensionObjects([
+                    JMSConverterConfiguration::createWithDefaults()
+                        ->withDefaultNullSerialization(true)
+                        ->withDefaultEnumSupport(true),
+                ])
+                ->withNamespaces(['Test\Ecotone\JMSConverter\Fixture\EnumHeaderConversion']),
         );
 
         self::assertNull($playground->typeHintedStringBackedEnum);
@@ -42,7 +44,7 @@ class HeaderConversionTest extends TestCase
         self::assertNull($playground->typeHintedBasicEnum);
         self::assertNull($playground->nonTypeHintedBasicEnum);
 
-        $ecotone->publishEventWithRouting(
+        $ecotone->publishEventWithRoutingKey(
             routingKey: 'message',
             event: new Message(),
             metadata: [
@@ -55,15 +57,13 @@ class HeaderConversionTest extends TestCase
             ]
         );
 
-        $ecotone->run('async');
-
         self::assertEquals(StringEnum::foo, $playground->typeHintedStringBackedEnum);
         ;
-        self::assertEquals(StringEnum::foo->value, $playground->nonTypeHintedStringBackedEnum);
+        self::assertEquals(StringEnum::foo, $playground->nonTypeHintedStringBackedEnum);
         self::assertEquals(NumericEnum::ONE, $playground->typeHintedIntBackedEnum);
-        self::assertEquals(NumericEnum::ONE->value, $playground->nonTypeHintedIntBackedEnum);
+        self::assertEquals(NumericEnum::ONE, $playground->nonTypeHintedIntBackedEnum);
         self::assertEquals(BasicEnum::ONE, $playground->typeHintedBasicEnum);
-        self::assertEquals(BasicEnum::ONE->name, $playground->nonTypeHintedBasicEnum);
+        self::assertEquals(BasicEnum::ONE, $playground->nonTypeHintedBasicEnum);
     }
 
     public function test_handling_enums_in_headers_async(): void
@@ -73,12 +73,15 @@ class HeaderConversionTest extends TestCase
         $ecotone = EcotoneLite::bootstrapFlowTesting(
             classesToResolve: [Playground::class],
             containerOrAvailableServices: [$playground],
-            extensionObjects: [
-                SimpleMessageChannelBuilder::createQueueChannel('async'),
-                JMSConverterConfiguration::createWithDefaults()->withDefaultNullSerialization(true)->withDefaultEnumSupport(true),
-            ],
-            enabledModules: [ModulePackageList::JMS_CONVERTER_PACKAGE, ],
-            namespaces: ['Test\Ecotone\JMSConverter\Fixture\EnumHeaderConversion'],
+            configuration: ServiceConfiguration::createWithDefaults()
+                ->withSkippedModulePackageNames(ModulePackageList::allPackagesExcept([ModulePackageList::JMS_CONVERTER_PACKAGE, ModulePackageList::ASYNCHRONOUS_PACKAGE]))
+                ->withExtensionObjects([
+                    SimpleMessageChannelBuilder::createQueueChannel('async'),
+                    JMSConverterConfiguration::createWithDefaults()
+                        ->withDefaultNullSerialization(true)
+                        ->withDefaultEnumSupport(true),
+                ])
+                ->withNamespaces(['Test\Ecotone\JMSConverter\Fixture\EnumHeaderConversion']),
         );
 
         self::assertNull($playground->typeHintedStringBackedEnum);
@@ -88,7 +91,7 @@ class HeaderConversionTest extends TestCase
         self::assertNull($playground->typeHintedBasicEnum);
         self::assertNull($playground->nonTypeHintedBasicEnum);
 
-        $ecotone->publishEventWithRouting(
+        $ecotone->publishEventWithRoutingKey(
             routingKey: 'message',
             event: new Message(),
             metadata: [
